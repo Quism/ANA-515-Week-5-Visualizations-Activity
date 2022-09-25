@@ -1,0 +1,46 @@
+---
+title: "ANA 515 Week 5 Visualizations Activity"
+author: "Gyu Hyun Byun"
+date: "2022-09-25"
+output:
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(tidyselect)
+library(tinytex)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+##
+## Reading the data into R and Cleaning the Data
+##
+The data is read into R, sorted by the variable, total_litres_of_pure_alcohol in reverse order.
+Then, the data is filtered to focus on the top 10 countries with the highest pure alcohol consumption.
+
+```{r echo = TRUE}
+drinks <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/50ec9ccfe3aa20f328bfd5e5da584fa5e15efee6/alcohol-consumption/drinks.csv")
+drinks <- drinks[order(-drinks$total_litres_of_pure_alcohol),]
+drinks <- drinks[1:10,]
+drinks$country <- factor(drinks$country, levels = drinks$country[order(-drinks$total_litres_of_pure_alcohol)])
+```
+##
+## Visualization #1: Bar Plot
+##
+The graph shows the top 10 alcohol consuming countries by their total liters of pure alcohol consumption per person per year.
+
+```{r, echo = TRUE}
+barplot(main = "Top 10 Alcohol Consuming Countries", height = drinks$total_litres_of_pure_alcohol, names = drinks$country, las=2, border="black", col="white")
+```
+
+##
+## Visualization #2: GGPlot Geom Bar Graph
+##
+The graph shows the top 10 alcohol consuming countries with their wine consumption in RED, beer consumption in YELLOW, and spirit consumption in BLUE. 
+
+```{r, echo = TRUE}
+ggplot(drinks) + geom_bar(aes(x = country, y = beer_servings), stat = "identity", color="yellow", fill=NA, size=2) + geom_bar(aes(x = country, y = spirit_servings), stat = "identity", color="blue", fill=NA, size=2) + geom_bar(aes(x = country, y = wine_servings), stat = "identity", color="red", fill=NA, size=2) + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) + labs(title="Top 10 Alcohol Consuming Countries by Drink Type", x = "Country", y = "Consumption")
+```
